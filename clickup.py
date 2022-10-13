@@ -41,13 +41,12 @@ def main():
 
 def info(entry):
     "Return a string with information about the entry"
-    start_s = int(entry['start']) // 1000  # in seconds since the Epoch
-    end_s = int(entry['end']) // 1000
-    duration_s = int(entry['duration']) // 1000  # in seconds
+    start_s = int(entry['start']) // 1000  # in seconds since 1970-01-01
+    end_s   = int(entry['end'])   // 1000
 
-    start = datetime.fromtimestamp(start_s).strftime('%a, %d %b %H:%M')
-    end = datetime.fromtimestamp(end_s).strftime('%H:%M')
-    duration = '%.2f h' % (duration_s / 3600)
+    start = datetime.fromtimestamp(start_s).strftime('%a %d %b %H:%M')
+    end   = datetime.fromtimestamp(end_s  ).strftime('%H:%M')
+    duration = '%.2f h' % ((end_s - start_s) / 3600)
 
     return f"""{start} - {end} ({duration})
 {yellow(entry['task']['name'])} {blue(entry['task_url'])}
