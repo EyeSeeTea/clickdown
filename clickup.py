@@ -48,7 +48,7 @@ def main():
 
 def get_day(entry):
     start_s, _ = get_span(entry)
-    return datetime.fromtimestamp(start_s).strftime('%a %d %b')  # Tue 04 Oct
+    return datetime.fromtimestamp(start_s).strftime('%a %d %b')  # ~ Tue 04 Oct
 
 
 def get_duration(entry):
@@ -63,10 +63,13 @@ def info(entry):
     start = datetime.fromtimestamp(start_s).strftime('%H:%M')  # time as HH:MM
     end = datetime.fromtimestamp(end_s).strftime('%H:%M')
     duration = '%.2f h' % ((end_s - start_s) / 3600)
+    url = entry['task_url']
+    task = entry['task']['name']
+    description = entry['description'] or '<empty description>'
 
-    return f"""{start} - {end} ({duration}) {black(entry['task_url'])}
-{yellow(entry['task']['name'])}
-{green(entry['description'] or '<empty description>')}"""
+    return (f'{start} - {end} ({duration}) {black(url)}\n'
+            f'{yellow(task)}\n'
+            f'{green(description)}')
 
 
 def get_span(entry):
