@@ -11,6 +11,7 @@ Show the tracked times in clickup.
 # https://clickup.com/api/clickupreference/operation/Gettimeentrieswithinadaterange/
 
 from datetime import datetime
+from itertools import groupby
 from urllib.request import Request, urlopen
 from urllib.error import HTTPError
 import json
@@ -27,11 +28,17 @@ def main():
         req = Request(url, headers={'Authorization': token})
 
         print(f'Connecting to {urlbase} ...')
-        entries = json.loads(urlopen(req).read())['data']
-        entries.sort(key=lambda x: x['start'])  # sort by starting date
+        entries_all = json.loads(urlopen(req).read())['data']
+        entries_all.sort(key=lambda x: x['start'])  # sort by starting date
 
-        for entry in entries:
-            print('\n' + info(entry))
+        for day, group in groupby(entries_all, get_day):
+            entries = list(group)  # so we don't exhaust the iterator
+            total_s = sum(get_duration(entry) for entry in entries)
+
+            print('\n== %s (total: %.2f h) ==' % (day, total_s / 3600))
+            for entry in entries:
+                print('\n' + info(entry))
+
     except FileNotFoundError as e:
         print(e)
     except HTTPError as e:
@@ -39,18 +46,32 @@ def main():
         print('Maybe there is a problem with your token?')
 
 
+def get_day(entry):
+    start_s, _ = get_span(entry)
+    return datetime.fromtimestamp(start_s).strftime('%a %d %b')  # Tue 04 Oct
+
+
+def get_duration(entry):
+    start_s, end_s = get_span(entry)
+    return end_s - start_s
+
+
 def info(entry):
     "Return a string with information about the entry"
-    start_s = int(entry['start']) // 1000  # in seconds since 1970-01-01
-    end_s   = int(entry['end'])   // 1000
+    start_s, end_s = get_span(entry)
 
-    start = datetime.fromtimestamp(start_s).strftime('%a %d %b %H:%M')
-    end   = datetime.fromtimestamp(end_s  ).strftime('%H:%M')
+    start = datetime.fromtimestamp(start_s).strftime('%H:%M')  # time as HH:MM
+    end = datetime.fromtimestamp(end_s).strftime('%H:%M')
     duration = '%.2f h' % ((end_s - start_s) / 3600)
 
-    return f"""{start} - {end} ({duration})
-{yellow(entry['task']['name'])} {blue(entry['task_url'])}
+    return f"""{start} - {end} ({duration}) {black(entry['task_url'])}
+{yellow(entry['task']['name'])}
 {green(entry['description'] or '<empty description>')}"""
+
+
+def get_span(entry):
+    to_s = lambda key: int(entry[key]) // 1000  # seconds since 1970-01-01
+    return to_s('start'), to_s('end')
 
 
 def ansi(n):

@@ -16,13 +16,17 @@ It will print in the console something like:
 ```
 Connecting to https://api.clickup.com/api/v2 ...
 
-Mon, 19 Sep 09:00 - 11:00 (2.00 h)
+== Mon 19 Sep (total: 4.00 h) ==
+
+09:00 - 11:00 (2.00 h)
 Server optimization https://app.clickup.com/t/253hjxz
 Rewired the servers for max fun
 
-Mon, 19 Sep 12:00 - 14:00 (2.00 h)
+12:00 - 14:00 (2.00 h)
 Boring task #666 https://app.clickup.com/t/133hgxs
 Watched paint dry
+
+== Tue 20 Sep (total: 6.25 h) ==
 
 [...]
 ```
