@@ -2,8 +2,8 @@
 
 Shows information for the time tracked in tasks during the last month.
 
-To run it, you need to have a file called `token.txt` that contains
-your clickup token (see section `Getting a token` below).
+To run it, you need a file named `token.txt` that contains your
+clickup token (see section `Getting a token` below).
 
 Run it with:
 
@@ -34,10 +34,10 @@ The program connects to clickup on your behalf. To do so, it needs to
 use a personal token that identifies you.
 
 To get a token, go to clickup -> user (bottom left) -> Apps. See the
-detailed documentation at:
+detailed documentation at
 https://clickup.com/api/developer-portal/authentication/#personal-token
 
-Once you have a token, you just need to write it into a file called
+Once you have a token, you just need to write it into a file named
 `token.txt` for the program to read it.
 
 
