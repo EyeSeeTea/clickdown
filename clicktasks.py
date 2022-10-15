@@ -5,21 +5,25 @@ See pending tasks.
 """
 
 from datetime import datetime
-from urllib.request import Request, urlopen
 from urllib.error import HTTPError
-import json
 
 import cache
+from colors import black, red, green, yellow, blue, magenta, cyan, white
 
-urlbase = 'https://api.clickup.com/api/v2'
 status_ignored = ['done (to be reviewed)', 'to test', 'ready', 'blocked']
 
 
 def main():
     try:
-        tasks = [task for task in get_tasks()
+        team = 4528615  # the id of the EyeSeeTea team
+        user = 38428504  # your personal id
+        refresh_endpoint = f'/team/{team}/task?assignees[]={user}'
+
+        tasks_all = cache.get_data('tasks.json', refresh_endpoint)['tasks']
+
+        tasks = [task for task in tasks_all
                  if task['status']['status'] not in status_ignored]
-        tasks.sort(key=lambda x: x['date_created'])
+        tasks.sort(key=lambda x: x['date_created'])  # sort by created date
 
         for i, task in enumerate(tasks):
             print(f'\n# {i+1} {info(task)}')
@@ -41,34 +45,6 @@ def main():
         pass
 
 
-def get_tasks():
-    "Return list of tasks as they come from an api request"
-    fp, age = cache.read('tasks.json')
-
-    if fp:
-        if age < 3600:
-            print(f'Reading from {cache.cdir}/tasks.json ...')
-            return json.loads(fp.read())['tasks']
-        else:
-            print('Cache file is too old and will update.')
-            fp.close()
-
-    token = open('token.txt').read().strip()
-    team = 4528615  # the id of the EyeSeeTea team
-    user = 38428504  # your personal id
-
-    url = f'{urlbase}/team/{team}/task?assignees[]={user}'
-    req = Request(url, headers={'Authorization': token})
-
-    print(f'Connecting to {urlbase} ...')
-    data = urlopen(req).read()
-
-    print(f'Caching result for the next hour to {cache.cdir}/tasks.json ...')
-    cache.write('tasks.json', data)
-
-    return json.loads(data)['tasks']
-
-
 def info(task):
     "Return a string with information about the task"
     status = task['status']['status']
@@ -88,13 +64,6 @@ def info(task):
 
 def to_date(str_ms):
     return datetime.fromtimestamp(int(str_ms) // 1000).strftime('%a %d %b')
-
-
-def ansi(n):
-    "Return function that escapes text with ANSI color n"
-    return lambda txt: '\x1b[%dm%s\x1b[0m' % (n, txt)
-
-black, red, green, yellow, blue, magenta, cyan, white = map(ansi, range(30, 38))
 
 
 

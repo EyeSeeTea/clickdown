@@ -6,18 +6,19 @@ Show the tracked time in clickup.
 
 from datetime import datetime
 from itertools import groupby
-from urllib.request import Request, urlopen
 from urllib.error import HTTPError
-import json
 
 import cache
-
-urlbase = 'https://api.clickup.com/api/v2'
+from colors import black, red, green, yellow, blue, magenta, cyan, white
 
 
 def main():
     try:
-        entries_all = get_entries()
+        team = 4528615  # the id of the EyeSeeTea team
+        refresh_endpoint = f'/team/{team}/time_entries'
+
+        entries_all = cache.get_data('time.json', refresh_endpoint)['data']
+
         entries_all.sort(key=lambda x: x['start'])  # sort by starting date
 
         for day, group in groupby(entries_all, get_day):
@@ -33,33 +34,6 @@ def main():
     except HTTPError as e:
         print(e)
         print('Maybe there is a problem with your token?')
-
-
-def get_entries():
-    "Return list of entries as they come from an api request"
-    fp, age = cache.read('time.json')
-
-    if fp:
-        if age < 3600:
-            print(f'Reading from {cache.cdir}/time.json ...')
-            return json.loads(fp.read())['data']
-        else:
-            print('Cache file is too old and will update.')
-            fp.close()
-
-    token = open('token.txt').read().strip()
-    team = 4528615  # the id of the EyeSeeTea team
-
-    url = f'{urlbase}/team/{team}/time_entries'
-    req = Request(url, headers={'Authorization': token})
-
-    print(f'Connecting to {urlbase} ...')
-    data = urlopen(req).read()
-
-    print(f'Caching result for the next hour to {cache.cdir}/time.json ...')
-    cache.write('time.json', data)
-
-    return json.loads(data)['data']
 
 
 def get_day(entry):
@@ -91,13 +65,6 @@ def info(entry):
 def get_span(entry):
     to_s = lambda key: int(entry[key]) // 1000  # seconds since 1970-01-01
     return to_s('start'), to_s('end')
-
-
-def ansi(n):
-    "Return function that escapes text with ANSI color n"
-    return lambda txt: '\x1b[%dm%s\x1b[0m' % (n, txt)
-
-black, red, green, yellow, blue, magenta, cyan, white = map(ansi, range(30, 38))
 
 
 
