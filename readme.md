@@ -6,8 +6,8 @@ They work by making queries to the clickup api. The requests are
 cached for an hour, but you can delete the cache files at any point.
 
 To run them, you need a configuration file named `clickdown.cfg` that
-contains at least your clickup token (see section `Getting a token`
-below) and the id of your team.
+contains at least your clickup token and the id of your team (see
+section `Configuration file` below).
 
 
 ## Clicktime
@@ -76,7 +76,7 @@ and you can input the number of a task to see more details about it.
 
 The configuration file is named `clickdown.cfg` and looks like this:
 
-```cfg
+```conf
 token = YOUR_TOKEN
 
 # The id of your team.
@@ -107,8 +107,8 @@ in your browser bar when you are logged in.
 One possible way is to find it in the output of:
 
 ```sh
-http https://api.clickup.com/api/v2/team/YOUR_TEAM_ID 'Authorization: YOUR_TOKEN' | \
-    jq -c '.team.members[].user | {id, username}'
+http https://api.clickup.com/api/v2/team/YOUR_TEAM_ID 'Authorization: YOUR_TOKEN' \
+    | jq -c '.team.members[].user | {id, username}'
 ```
 
 (This example uses [httpie](https://httpie.io/) and
