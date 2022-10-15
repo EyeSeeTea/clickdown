@@ -6,17 +6,15 @@ import os
 import time
 import json
 from urllib.request import Request, urlopen
-
-urlbase = 'https://api.clickup.com/api/v2'
+from configparser import ConfigParser
 
 cachedir = os.environ.get('XDG_CACHE_HOME',
                           f'{os.environ["HOME"]}/.cache') + '/clickdown'
-configdir = os.environ.get('XDG_CONFIG_HOME',
-                           f'{os.environ["HOME"]}/.config') + '/clickdown'
 
-def get_data(fname, refresh_endpoint):
+
+def get_data(fname, refresh_url):
     "Return data as they come from an api request"
-    fp, age = read(fname)
+    fp, age = read_cache(fname)
 
     if fp:
         if age < 3600:
@@ -26,21 +24,21 @@ def get_data(fname, refresh_endpoint):
             print('Cache file is too old and will update.')
             fp.close()
 
-    token = get_token()
+    cfg = read_config()
 
-    url = f'{urlbase}{refresh_endpoint}'
-    req = Request(url, headers={'Authorization': token})
+    url = refresh_url.format(team=cfg['team'], user=cfg.get('user', '0000'))
+    req = Request(url, headers={'Authorization': cfg['token']})
 
     print(f'Connecting to {url} ...')
     data = urlopen(req).read()
 
     print(f'Caching result for the next hour to {cachedir}/{fname} ...')
-    write(fname, data)
+    write_cache(fname, data)
 
     return json.loads(data)
 
 
-def read(fname):
+def read_cache(fname):
     "Return the file pointer and age of the cache file if it exists"
     cache = f'{cachedir}/{fname}'
 
@@ -50,7 +48,7 @@ def read(fname):
     return open(cache), time.time() - os.stat(cache).st_mtime
 
 
-def write(fname, data):
+def write_cache(fname, data):
     if not os.path.exists(cachedir):
         os.mkdir(cachedir)
 
@@ -58,13 +56,8 @@ def write(fname, data):
     open(cache, 'wb').write(data)
 
 
-def get_token():
-    if os.path.exists('token.txt'):
-        print('Reading token from local file token.txt ...')
-        return open('token.txt').read().strip()
-    elif os.path.exists(f'{configdir}/token.txt'):
-        print(f'Reading token from {configdir}/token.txt ...')
-        return open(f'{configdir}/token.txt').read().strip()
-    else:
-        print('Token not found. Input token below and/or see readme.md.')
-        return input('Token: ').strip()
+def read_config():
+    cp = ConfigParser()
+    with open('clickdown.cfg') as fp:
+        cp.read_string('[top]\n' + fp.read())
+    return cp['top']

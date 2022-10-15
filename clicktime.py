@@ -7,6 +7,7 @@ Show the tracked time in clickup.
 from datetime import datetime
 from itertools import groupby
 from urllib.error import HTTPError
+from configparser import ParsingError
 
 import cache
 from colors import black, red, green, yellow, blue, magenta, cyan, white
@@ -14,10 +15,10 @@ from colors import black, red, green, yellow, blue, magenta, cyan, white
 
 def main():
     try:
-        team = 4528615  # the id of the EyeSeeTea team
-        refresh_endpoint = f'/team/{team}/time_entries'
+        refresh_url = ('https://api.clickup.com/api/v2'
+                       '/team/{team}/time_entries')
 
-        entries_all = cache.get_data('time.json', refresh_endpoint)['data']
+        entries_all = cache.get_data('time.json', refresh_url)['data']
 
         entries_all.sort(key=lambda x: x['start'])  # sort by starting date
 
@@ -32,6 +33,10 @@ def main():
     except HTTPError as e:
         print(e)
         print('Maybe there is a problem with your token?')
+    except KeyError as e:
+        print('Missing key in clickdown.cfg:', e)
+    except (FileNotFoundError, ParsingError) as e:
+        print(e)
     except (KeyboardInterrupt, EOFError) as e:
         pass
 

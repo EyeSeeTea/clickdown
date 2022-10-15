@@ -5,13 +5,14 @@ Utilities to work with [clickup](https://clickup.com/).
 They work by making queries to the clickup api. The requests are
 cached for an hour, but you can delete the cache files at any point.
 
+To run them, you need a configuration file named `clickdown.cfg` that
+contains at least your clickup token (see section `Getting a token`
+below) and the id of your team.
+
 
 ## Clicktime
 
 Shows information for the time tracked in tasks during the last month.
-
-To run it, you need a file named `token.txt` that contains your
-clickup token (see section `Getting a token` below).
 
 Run it with:
 
@@ -73,7 +74,21 @@ Find subtle bug in unreadable, clumsy, slow software
 and you can input the number of a task to see more details about it.
 
 
-## Getting a token
+## Configuration file
+
+The configuration file is named `clickdown.cfg` and looks like this:
+
+```cfg
+token = YOUR_TOKEN
+
+# The id of your team.
+team = 1234567
+
+# The id of your user.
+user = 12345678
+```
+
+### Getting a token
 
 The programs connect to clickup on your behalf. To do so, they need to
 use a personal token that identifies you.
@@ -82,11 +97,24 @@ To [get a
 token](https://clickup.com/api/developer-portal/authentication/#personal-token),
 basically go to clickup -> user (bottom left) -> Apps.
 
-You can write the token in a file named `token.txt` for the programs
-to read it. The file can be in the directory where you run the
-programs, or in its [standard configuration
-directory](https://en.wikipedia.org/wiki/Freedesktop.org#Base_Directory_Specification)
-(normally `$HOME/config/clickdown`).
+
+### Finding your team id
+
+Your team id is the number that appears just after `app.clickup.com`
+in your browser bar when you are logged in.
+
+
+### Finding your user id
+
+One possible way is to find it in the output of:
+
+```sh
+http https://api.clickup.com/api/v2/team/YOUR_TEAM_ID 'Authorization: YOUR_TOKEN' | \
+    jq -c '.team.members[].user | {id, username}'
+```
+
+(This example uses [httpie](https://httpie.io/) and
+[jq](https://stedolan.github.io/jq/).)
 
 
 ## Clickup api

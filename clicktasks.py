@@ -6,6 +6,7 @@ Show pending tasks.
 
 from datetime import datetime
 from urllib.error import HTTPError
+from configparser import ParsingError
 
 import cache
 from colors import black, red, green, yellow, blue, magenta, cyan, white
@@ -15,11 +16,10 @@ status_ignored = ['done (to be reviewed)', 'to test', 'ready', 'blocked']
 
 def main():
     try:
-        team = 4528615  # the id of the EyeSeeTea team
-        user = 38428504  # your personal id
-        refresh_endpoint = f'/team/{team}/task?assignees[]={user}'
+        refresh_url = ('https://api.clickup.com/api/v2'
+                       '/team/{team}/task?assignees[]={user}')
 
-        tasks_all = cache.get_data('tasks.json', refresh_endpoint)['tasks']
+        tasks_all = cache.get_data('tasks.json', refresh_url)['tasks']
 
         tasks = [task for task in tasks_all
                  if task['status']['status'] not in status_ignored]
@@ -30,7 +30,8 @@ def main():
 
         while True:
             i = int(input('\n> ')) - 1
-            assert 0 <= i < len(tasks)
+            if not 0 <= i < len(tasks):
+                break
 
             task = tasks[i]
             print(f'\n# {i+1} {info(task)}\n')
@@ -39,7 +40,11 @@ def main():
     except HTTPError as e:
         print(e)
         print('Maybe there is a problem with your token?')
-    except (KeyboardInterrupt, EOFError, ValueError, AssertionError) as e:
+    except KeyError as e:
+        print('Missing key in clickdown.cfg:', e)
+    except (FileNotFoundError, ParsingError) as e:
+        print(e)
+    except (KeyboardInterrupt, EOFError, ValueError) as e:
         pass
 
 
