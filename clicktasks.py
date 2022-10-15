@@ -4,20 +4,15 @@
 See pending tasks.
 """
 
-import os
-import json
-import time
 from datetime import datetime
 from urllib.request import Request, urlopen
 from urllib.error import HTTPError
+import json
 
+import cache
 
 urlbase = 'https://api.clickup.com/api/v2'
-
 status_ignored = ['done (to be reviewed)', 'to test', 'ready', 'blocked']
-
-cache = os.environ.get('XDG_CACHE_HOME',
-                       f'{os.environ["HOME"]}/.cache') + '/clickdown/tasks.json'
 
 
 def main():
@@ -48,11 +43,11 @@ def main():
 
 def get_tasks():
     "Return list of tasks as they come from an api request"
-    fp, age = read_cache()
+    fp, age = cache.read('tasks.json')
 
     if fp:
         if age < 3600:
-            print(f'Reading from {cache} ...')
+            print(f'Reading from {cache.cdir}/tasks.json ...')
             return json.loads(fp.read())['tasks']
         else:
             print('Cache file is too old and will update.')
@@ -68,8 +63,8 @@ def get_tasks():
     print(f'Connecting to {urlbase} ...')
     data = urlopen(req).read()
 
-    print(f'Caching result for the next hour to {cache} ...')
-    write_cache(data)
+    print(f'Caching result for the next hour to {cache.cdir}/tasks.json ...')
+    cache.write('tasks.json', data)
 
     return json.loads(data)['tasks']
 
@@ -93,22 +88,6 @@ def info(task):
 
 def to_date(str_ms):
     return datetime.fromtimestamp(int(str_ms) // 1000).strftime('%a %d %b')
-
-
-def read_cache():
-    "Return the file pointer and age of the cache file if it exists"
-    if not os.path.exists(cache):
-        return None, None
-
-    return open(cache), time.time() - os.stat(cache).st_mtime
-
-
-def write_cache(data):
-    cdir = os.path.dirname(cache)
-    if not os.path.exists(cdir):
-        os.mkdir(cdir)
-
-    open(cache, 'wb').write(data)
 
 
 def ansi(n):

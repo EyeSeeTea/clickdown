@@ -1,14 +1,8 @@
 #!/usr/bin/env python3
 
 """
-Show the tracked times in clickup.
+Show the tracked time in clickup.
 """
-
-# To get the token, go to clickup -> user (bottom left) -> Apps.
-# See: https://clickup.com/api/developer-portal/authentication/#personal-token
-#
-# Reference about the clickup api:
-# https://clickup.com/api/clickupreference/operation/Gettimeentrieswithinadaterange/
 
 from datetime import datetime
 from itertools import groupby
@@ -16,19 +10,14 @@ from urllib.request import Request, urlopen
 from urllib.error import HTTPError
 import json
 
+import cache
+
 urlbase = 'https://api.clickup.com/api/v2'
 
 
 def main():
     try:
-        token = open('token.txt').read().strip()
-        team = 4528615  # the id of the EyeSeeTea team
-
-        url = f'{urlbase}/team/{team}/time_entries'
-        req = Request(url, headers={'Authorization': token})
-
-        print(f'Connecting to {urlbase} ...')
-        entries_all = json.loads(urlopen(req).read())['data']
+        entries_all = get_entries()
         entries_all.sort(key=lambda x: x['start'])  # sort by starting date
 
         for day, group in groupby(entries_all, get_day):
@@ -44,6 +33,33 @@ def main():
     except HTTPError as e:
         print(e)
         print('Maybe there is a problem with your token?')
+
+
+def get_entries():
+    "Return list of entries as they come from an api request"
+    fp, age = cache.read('time.json')
+
+    if fp:
+        if age < 3600:
+            print(f'Reading from {cache.cdir}/time.json ...')
+            return json.loads(fp.read())['data']
+        else:
+            print('Cache file is too old and will update.')
+            fp.close()
+
+    token = open('token.txt').read().strip()
+    team = 4528615  # the id of the EyeSeeTea team
+
+    url = f'{urlbase}/team/{team}/time_entries'
+    req = Request(url, headers={'Authorization': token})
+
+    print(f'Connecting to {urlbase} ...')
+    data = urlopen(req).read()
+
+    print(f'Caching result for the next hour to {cache.cdir}/time.json ...')
+    cache.write('time.json', data)
+
+    return json.loads(data)['data']
 
 
 def get_day(entry):
