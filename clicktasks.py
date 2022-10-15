@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 """
-See pending tasks.
+Show pending tasks.
 """
 
 from datetime import datetime
@@ -36,8 +36,6 @@ def main():
             print(f'\n# {i+1} {info(task)}\n')
             print(green(task['text_content'] or '<no content>'))
 
-    except FileNotFoundError as e:
-        print(e)
     except HTTPError as e:
         print(e)
         print('Maybe there is a problem with your token?')

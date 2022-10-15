@@ -1,6 +1,9 @@
 # Clickdown
 
-Utilities to work with clickup.
+Utilities to work with [clickup](https://clickup.com/).
+
+They work by making queries to the clickup api. The requests are
+cached for an hour, but you can delete the cache files at any point.
 
 
 ## Clicktime
@@ -16,10 +19,12 @@ Run it with:
 ./clicktime.py
 ```
 
-It will print in the console something like:
+It prints in the console something like:
 
 ```
-Connecting to https://api.clickup.com/api/v2 ...
+Reading token from local file token.txt ...
+Connecting to https://api.clickup.com/api/v2/team/1234567/time_entries ...
+Caching result for the next hour to /home/you/.cache/clickdown/time.json ...
 
 == Mon 19 Sep (total: 4.00 h) ==
 
@@ -47,21 +52,48 @@ Run it with:
 ./clicktasks.py
 ```
 
+It prints in the console something like:
+
+```
+Reading token from /home/you/.config/clickdown/token.txt ...
+Connecting to https://api.clickup.com/api/v2/team/1234567/task?assignees[]=12345678 ...
+Caching result for the next hour to /home/you/.cache/clickdown/tasks.json ...
+
+# 1 (in progress) Fun list https://app.clickup.com/t/4hfw59n
+Create new system to conquer the world
+
+# 2 (to do) Boring list https://app.clickup.com/t/1u654a9
+Find subtle bug in unreadable, clumsy, slow software
+
+[...]
+
+>
+```
+
+and you can input the number of a task to see more details about it.
+
 
 ## Getting a token
 
-The program connects to clickup on your behalf. To do so, it needs to
+The programs connect to clickup on your behalf. To do so, they need to
 use a personal token that identifies you.
 
 To get a token, go to clickup -> user (bottom left) -> Apps. See the
 detailed documentation at
 https://clickup.com/api/developer-portal/authentication/#personal-token
 
-Once you have a token, you just need to write it into a file named
-`token.txt` for the program to read it.
+You can write the token in a file named `token.txt` for the programs
+to read it. The file can be in the directory where you run the
+programs, or in its [standard configuration
+directory](https://en.wikipedia.org/wiki/Freedesktop.org#Base_Directory_Specification)
+(normally `$HOME/config/clickdown`).
 
 
 ## Clickup api
 
-Reference about the clickup api:
-https://clickup.com/api/clickupreference/operation/Gettimeentrieswithinadaterange/
+Reference about the clickup api: https://clickup.com/api
+
+In particular, these are the endpoints for each program:
+
+* clicktime - https://clickup.com/api/clickupreference/operation/Gettimeentrieswithinadaterange/
+* clicktasks - https://clickup.com/api/clickupreference/operation/GetFilteredTeamTasks/

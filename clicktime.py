@@ -29,11 +29,11 @@ def main():
             for entry in entries:
                 print('\n' + info(entry))
 
-    except FileNotFoundError as e:
-        print(e)
     except HTTPError as e:
         print(e)
         print('Maybe there is a problem with your token?')
+    except (KeyboardInterrupt, EOFError) as e:
+        pass
 
 
 def get_day(entry):
