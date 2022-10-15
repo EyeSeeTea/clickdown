@@ -17,7 +17,7 @@ def get_data(fname, refresh_url):
     fp, age = read_cache(fname)
 
     if fp:
-        if age < 3600:
+        if age < 3600:  # in seconds (1 hour)
             print(f'Reading from {cachedir}/{fname} ...')
             return json.loads(fp.read())
         else:
@@ -32,7 +32,7 @@ def get_data(fname, refresh_url):
     print(f'Connecting to {url} ...')
     data = urlopen(req).read()
 
-    print(f'Caching result for the next hour to {cachedir}/{fname} ...')
+    print(f'Caching result for the next hour in {cachedir}/{fname} ...')
     write_cache(fname, data)
 
     return json.loads(data)
