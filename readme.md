@@ -78,9 +78,9 @@ and you can input the number of a task to see more details about it.
 The programs connect to clickup on your behalf. To do so, they need to
 use a personal token that identifies you.
 
-To get a token, go to clickup -> user (bottom left) -> Apps. See the
-detailed documentation at
-https://clickup.com/api/developer-portal/authentication/#personal-token
+To [get a
+token](https://clickup.com/api/developer-portal/authentication/#personal-token),
+basically go to clickup -> user (bottom left) -> Apps.
 
 You can write the token in a file named `token.txt` for the programs
 to read it. The file can be in the directory where you run the
