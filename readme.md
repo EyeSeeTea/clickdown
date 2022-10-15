@@ -1,4 +1,9 @@
-# Clickup time track
+# Clickdown
+
+Utilities to work with clickup.
+
+
+## Clicktime
 
 Shows information for the time tracked in tasks during the last month.
 
@@ -8,7 +13,7 @@ clickup token (see section `Getting a token` below).
 Run it with:
 
 ```sh
-./clickup.py
+./clicktime.py
 ```
 
 It will print in the console something like:
@@ -29,6 +34,17 @@ Watched paint dry
 == Tue 20 Sep (total: 6.25 h) ==
 
 [...]
+```
+
+
+## Clicktasks
+
+Shows the tasks assigned to you.
+
+Run it with:
+
+```sh
+./clicktasks.py
 ```
 
 
