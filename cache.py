@@ -14,17 +14,17 @@ cachedir = os.environ.get('XDG_CACHE_HOME',
 
 def get_data(fname, refresh_url):
     "Return data as they come from an api request"
+    cfg = read_config()
+
     fp, age = read_cache(fname)
 
     if fp:
-        if age < 3600:  # in seconds (1 hour)
+        if age < int(cfg.get('cache_age_max', 3600)):  # in seconds
             print(f'Reading from {cachedir}/{fname} ...')
             return json.loads(fp.read())
         else:
             print('Cache file is too old and will update.')
             fp.close()
-
-    cfg = read_config()
 
     url = refresh_url.format(team=cfg['team'], user=cfg.get('user', '0000'))
     req = Request(url, headers={'Authorization': cfg['token']})

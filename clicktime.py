@@ -41,7 +41,7 @@ def main():
         print('Maybe there is a problem with your token?')
     except KeyError as e:
         print('Missing key in clickdown.cfg:', e)
-    except (FileNotFoundError, ParsingError) as e:
+    except (FileNotFoundError, ParsingError, ValueError) as e:
         print(e)
     except (KeyboardInterrupt, EOFError) as e:
         pass
