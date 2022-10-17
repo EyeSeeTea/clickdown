@@ -33,10 +33,11 @@ def main():
             sys.exit()  # skip interactive mode if redirecting the output
 
         while True:
-            i = int(input('\n> ')) - 1
-            if not 0 <= i < len(tasks):
+            choice = input('\n> ')
+            if not choice.isdecimal() or not 0 < int(choice) <= len(tasks):
                 break
 
+            i = int(choice) - 1
             task = tasks[i]
             print(f'\n# {i+1} {info(task)}\n')
             print(green(task['text_content'] or '<no content>'))
