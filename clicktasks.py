@@ -4,6 +4,7 @@
 Show pending tasks.
 """
 
+import sys
 from datetime import datetime
 from urllib.error import HTTPError
 from configparser import ParsingError
@@ -28,6 +29,9 @@ def main():
         for i, task in enumerate(tasks):
             print(f'\n# {i+1} {info(task)}')
 
+        if not sys.stdout.isatty():
+            sys.exit()  # skip interactive mode if redirecting the output
+
         while True:
             i = int(input('\n> ')) - 1
             if not 0 <= i < len(tasks):
@@ -39,13 +43,13 @@ def main():
 
     except HTTPError as e:
         print(e)
-        print('Maybe there is a problem with your token?')
+        sys.exit('Maybe there is a problem with your token?')
     except KeyError as e:
-        print('Missing key in clickdown.cfg:', e)
+        sys.exit('Missing key in clickdown.cfg:', e)
     except (FileNotFoundError, ParsingError, ValueError) as e:
-        print(e)
+        sys.exit(e)
     except (KeyboardInterrupt, EOFError) as e:
-        pass
+        sys.exit()
 
 
 def info(task):

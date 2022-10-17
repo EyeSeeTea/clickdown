@@ -4,6 +4,7 @@
 Show the tracked time in clickup.
 """
 
+import sys
 from datetime import datetime
 from itertools import groupby
 from urllib.error import HTTPError
@@ -38,13 +39,13 @@ def main():
 
     except HTTPError as e:
         print(e)
-        print('Maybe there is a problem with your token?')
+        sys.exit('Maybe there is a problem with your token?')
     except KeyError as e:
-        print('Missing key in clickdown.cfg:', e)
+        sys.exit('Missing key in clickdown.cfg:', e)
     except (FileNotFoundError, ParsingError, ValueError) as e:
-        print(e)
+        sys.exit(e)
     except (KeyboardInterrupt, EOFError) as e:
-        pass
+        sys.exit()
 
 
 def get_week(entry):
