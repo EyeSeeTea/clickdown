@@ -12,7 +12,7 @@ from urllib.error import HTTPError
 import cache
 from colors import get_colors
 
-status_ignored = ['done (to be reviewed)', 'to test', 'ready', 'blocked']
+ignored_status_default = 'done (to be reviewed),to test,blocked'
 
 
 def main():
@@ -24,8 +24,9 @@ def main():
 
         tasks_all = cache.get_data('tasks.json', refresh_url, cfg)['tasks']
 
+        ignored = cfg.get('ignored', ignored_status_default).split(',')
         tasks = [task for task in tasks_all
-                 if task['status']['status'] not in status_ignored]
+                 if task['status']['status'] not in ignored]
         tasks.sort(key=lambda x: x['date_created'])  # sort by created date
 
         colors = get_colors(cfg.get('theme', 'dark'))
@@ -76,9 +77,9 @@ def info(task, colors):
     due_date = colors.due(('due %s ' % to_date(task['due_date'])
                            if task['due_date'] else ''))
 
-    return (f'({status}) {lname} '
-            f'{priority}{due_date}{url}\n'
-            f'{name}')
+    return (f'{name}\n'
+            f'{lname} - {status} - {priority}{due_date}{url}')
+
 
 
 def to_date(str_ms):
