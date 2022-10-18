@@ -89,7 +89,7 @@ user = 12345678
 # Maximum number of seconds to keep the cached files (optional, 1h by default).
 cache_age_max = 3600
 
-# Color theme (optional, "light", "dark" (default), or "none").
+# Color theme (optional, can be "light", "dark" (default), or "none").
 theme = dark
 ```
 
