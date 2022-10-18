@@ -30,7 +30,7 @@ def main():
         colors = get_colors(cfg.get('theme', 'dark'))
 
         for i, task in enumerate(tasks):
-            print(f'\n# {i+1} {info(task, colors)}')
+            print(f'\n# {i+1} ' + info(task, colors))
 
         if not sys.stdout.isatty():
             sys.exit()  # skip interactive mode if redirecting the output
@@ -42,7 +42,7 @@ def main():
 
             i = int(choice) - 1
             task = tasks[i]
-            print(f'\n# {i+1} {info(task, colors)}\n')
+            print(f'\n# {i+1} ' + info(task, colors) + '\n')
             print(colors.text(task['text_content'] or '<no content>'))
 
     except HTTPError as e:
