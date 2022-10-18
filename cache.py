@@ -6,16 +6,13 @@ import os
 import time
 import json
 from urllib.request import Request, urlopen
-from configparser import ConfigParser
 
 cachedir = os.environ.get('XDG_CACHE_HOME',
                           f'{os.environ["HOME"]}/.cache') + '/clickdown'
 
 
-def get_data(fname, refresh_url):
+def get_data(fname, refresh_url, cfg):
     "Return data as they come from an api request"
-    cfg = read_config()
-
     fp, age = read_cache(fname)
 
     if fp:
@@ -54,10 +51,3 @@ def write_cache(fname, data):
 
     cache = f'{cachedir}/{fname}'
     open(cache, 'wb').write(data)
-
-
-def read_config():
-    cp = ConfigParser()
-    with open('clickdown.cfg') as fp:
-        cp.read_string('[top]\n' + fp.read())
-    return cp['top']

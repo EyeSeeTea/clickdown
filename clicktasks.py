@@ -6,28 +6,32 @@ Show pending tasks.
 
 import sys
 from datetime import datetime
+from configparser import ConfigParser, ParsingError
 from urllib.error import HTTPError
-from configparser import ParsingError
 
 import cache
-from colors import black, red, green, yellow, blue, magenta, cyan, white
+from colors import get_colors
 
 status_ignored = ['done (to be reviewed)', 'to test', 'ready', 'blocked']
 
 
 def main():
     try:
+        cfg = read_config()
+
         refresh_url = ('https://api.clickup.com/api/v2'
                        '/team/{team}/task?assignees[]={user}')
 
-        tasks_all = cache.get_data('tasks.json', refresh_url)['tasks']
+        tasks_all = cache.get_data('tasks.json', refresh_url, cfg)['tasks']
 
         tasks = [task for task in tasks_all
                  if task['status']['status'] not in status_ignored]
         tasks.sort(key=lambda x: x['date_created'])  # sort by created date
 
+        colors = get_colors(cfg.get('theme', 'dark'))
+
         for i, task in enumerate(tasks):
-            print(f'\n# {i+1} {info(task)}')
+            print(f'\n# {i+1} {info(task, colors)}')
 
         if not sys.stdout.isatty():
             sys.exit()  # skip interactive mode if redirecting the output
@@ -39,35 +43,42 @@ def main():
 
             i = int(choice) - 1
             task = tasks[i]
-            print(f'\n# {i+1} {info(task)}\n')
-            print(green(task['text_content'] or '<no content>'))
+            print(f'\n# {i+1} {info(task, colors)}\n')
+            print(colors.text(task['text_content'] or '<no content>'))
 
     except HTTPError as e:
         print(e)
         sys.exit('Maybe there is a problem with your token?')
     except KeyError as e:
         sys.exit('Missing key in clickdown.cfg:', e)
-    except (FileNotFoundError, ParsingError, ValueError) as e:
+    except (FileNotFoundError, ParsingError, ValueError, AssertionError) as e:
         sys.exit(e)
     except (KeyboardInterrupt, EOFError) as e:
         sys.exit()
 
 
-def info(task):
+def read_config():
+    cp = ConfigParser()
+    with open('clickdown.cfg') as fp:
+        cp.read_string('[top]\n' + fp.read())
+    return cp['top']
+
+
+def info(task, colors):
     "Return a string with information about the task"
-    status = task['status']['status']
-    lname = task['list']['name']
-    name = task['name']
-    url = task['url']
+    status = colors.status(task['status']['status'])
+    lname = colors.section(task['list']['name'])
+    name = colors.title(task['name'])
+    url = colors.url(task['url'])
 
-    priority = (('priority %s ' % task['priority']['priority'])
-                if task['priority'] else '')
-    due_date = ('due %s ' % to_date(task['due_date'])
-                if task['due_date'] else '')
+    priority = colors.priority((('priority %s ' % task['priority']['priority'])
+                                if task['priority'] else ''))
+    due_date = colors.due(('due %s ' % to_date(task['due_date'])
+                           if task['due_date'] else ''))
 
-    return (f'({blue(status)}) {magenta(lname)} '
-            f'{red(priority)}{cyan(due_date)}{black(url)}\n'
-            f'{yellow(name)}')
+    return (f'({status}) {lname} '
+            f'{priority}{due_date}{url}\n'
+            f'{name}')
 
 
 def to_date(str_ms):

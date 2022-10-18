@@ -7,21 +7,25 @@ Show the tracked time in clickup.
 import sys
 from datetime import datetime
 from itertools import groupby
+from configparser import ConfigParser, ParsingError
 from urllib.error import HTTPError
-from configparser import ParsingError
 
 import cache
-from colors import black, red, green, yellow, blue, magenta, cyan, white
+from colors import get_colors
 
 
 def main():
     try:
+        cfg = read_config()
+
         refresh_url = ('https://api.clickup.com/api/v2'
                        '/team/{team}/time_entries')
 
-        entries_all = cache.get_data('time.json', refresh_url)['data']
+        entries_all = cache.get_data('time.json', refresh_url, cfg)['data']
 
         entries_all.sort(key=lambda x: x['start'])  # sort by starting date
+
+        colors = get_colors(cfg.get('theme', 'dark'))
 
         for week, group_week in groupby(entries_all, get_week):
             entries_week = list(group_week)  # don't exhaust the iterator
@@ -32,7 +36,7 @@ def main():
 
                 print('\n== %s (total: %.2f h) ==' % (day, total_day_s / 3600))
                 for entry in entries_day:
-                    print('\n' + info(entry))
+                    print('\n' + info(entry, colors))
 
             total_week_s = sum(get_duration(entry) for entry in entries_week)
             print('\n-- (week total: %.2f h) --\n' % (total_week_s / 3600))
@@ -42,10 +46,17 @@ def main():
         sys.exit('Maybe there is a problem with your token?')
     except KeyError as e:
         sys.exit('Missing key in clickdown.cfg:', e)
-    except (FileNotFoundError, ParsingError, ValueError) as e:
+    except (FileNotFoundError, ParsingError, ValueError, AssertionError) as e:
         sys.exit(e)
     except (KeyboardInterrupt, EOFError) as e:
         sys.exit()
+
+
+def read_config():
+    cp = ConfigParser()
+    with open('clickdown.cfg') as fp:
+        cp.read_string('[top]\n' + fp.read())
+    return cp['top']
 
 
 def get_week(entry):
@@ -63,7 +74,7 @@ def get_duration(entry):
     return end_s - start_s
 
 
-def info(entry):
+def info(entry, colors):
     "Return a string with information about the entry"
     start_s, end_s = get_span(entry)
 
@@ -74,9 +85,9 @@ def info(entry):
     task = entry['task']['name']
     description = entry['description'] or '<empty description>'
 
-    return (f'{start} - {end} ({duration}) {black(url)}\n'
-            f'{yellow(task)}\n'
-            f'{green(description)}')
+    return (f'{start} - {end} ({duration}) {colors.url(url)}\n'
+            f'{colors.title(task)}\n'
+            f'{colors.text(description)}')
 
 
 def get_span(entry):
