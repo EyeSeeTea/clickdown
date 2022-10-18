@@ -12,8 +12,6 @@ from urllib.error import HTTPError
 import cache
 from colors import get_colors
 
-ignored_status_default = 'done (to be reviewed),to test,blocked'
-
 
 def main():
     try:
@@ -24,7 +22,7 @@ def main():
 
         tasks_all = cache.get_data('tasks.json', refresh_url, cfg)['tasks']
 
-        ignored = cfg.get('ignored', ignored_status_default).split(',')
+        ignored = cfg.get('ignored', '').split(',')
         tasks = [task for task in tasks_all
                  if task['status']['status'] not in ignored]
         tasks.sort(key=lambda x: x['date_created'])  # sort by created date
