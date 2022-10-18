@@ -81,13 +81,13 @@ def info(entry, colors):
     start = datetime.fromtimestamp(start_s).strftime('%H:%M')  # time as HH:MM
     end = datetime.fromtimestamp(end_s).strftime('%H:%M')
     duration = '%.2f h' % ((end_s - start_s) / 3600)
-    url = entry['task_url']
-    task = entry['task']['name']
-    description = entry['description'] or '<empty description>'
+    url = colors.url(entry['task_url'])
+    task = colors.title(entry['task']['name'])
+    description = colors.text(entry['description'] or '<empty description>')
 
-    return (f'{start} - {end} ({duration}) {colors.url(url)}\n'
-            f'{colors.title(task)}\n'
-            f'{colors.text(description)}')
+    return (f'{start} - {end} ({duration}) {url}\n'
+            f'{task}\n'
+            f'{description}')
 
 
 def get_span(entry):

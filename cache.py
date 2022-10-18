@@ -29,7 +29,7 @@ def get_data(fname, refresh_url, cfg):
     print(f'Connecting to {url} ...')
     data = urlopen(req).read()
 
-    print(f'Caching result for the next hour in {cachedir}/{fname} ...')
+    print(f'Caching result in {cachedir}/{fname} ...')
     write_cache(fname, data)
 
     return json.loads(data)

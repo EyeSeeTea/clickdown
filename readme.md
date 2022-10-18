@@ -24,7 +24,7 @@ It prints in the console something like:
 
 ```
 Connecting to https://api.clickup.com/api/v2/team/1234567/time_entries ...
-Caching result for the next hour in /home/you/.cache/clickdown/time.json ...
+Caching result in /home/you/.cache/clickdown/time.json ...
 
 == Mon 19 Sep (total: 4.00 h) ==
 
@@ -56,7 +56,7 @@ It prints in the console something like:
 
 ```
 Connecting to https://api.clickup.com/api/v2/team/1234567/task?assignees[]=12345678 ...
-Caching result for the next hour in /home/you/.cache/clickdown/tasks.json ...
+Caching result in /home/you/.cache/clickdown/tasks.json ...
 
 # 1 (in progress) Fun list https://app.clickup.com/t/4hfw59n
 Create new system to conquer the world
@@ -77,13 +77,20 @@ and you can input the number of a task to see more details about it.
 The configuration file is named `clickdown.cfg` and looks like this:
 
 ```conf
+# Your clickup token (necessary).
 token = YOUR_TOKEN
 
-# The id of your team.
+# The id of your team (necessary).
 team = 1234567
 
-# The id of your user.
+# The id of your user (optional, only if you use clicktasks).
 user = 12345678
+
+# Maximum number of seconds to keep the cached files (optional, 1h by default).
+cache_age_max = 3600
+
+# Color theme (optional, "light", "dark" (default), or "none").
+theme = dark
 ```
 
 ### Getting a token
