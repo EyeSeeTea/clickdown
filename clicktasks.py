@@ -53,6 +53,7 @@ def main():
     except (FileNotFoundError, ParsingError, ValueError, AssertionError) as e:
         sys.exit(e)
     except (KeyboardInterrupt, EOFError) as e:
+        print()
         sys.exit()
 
 
