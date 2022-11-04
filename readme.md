@@ -3,7 +3,8 @@
 Utilities to work with [clickup](https://clickup.com/).
 
 They work by making queries to the clickup api. The requests are
-cached for an hour, but you can delete the cache files at any point.
+cached for some time (an hour by default), but you can delete the
+cache files at any point.
 
 To run them, you need a configuration file named `clickdown.cfg` that
 contains at least your clickup token and the id of your team (see
@@ -61,15 +62,17 @@ Caching result in /home/you/.cache/clickdown/tasks.json ...
 # 1 Create new system to conquer the world
 Fun list - in progress - https://app.clickup.com/t/4hfw59n
 
-
 # 2 Find subtle bug in unreadable, clumsy, slow software
 Boring list - to do - https://app.clickup.com/t/1u654a9
+
 [...]
 
+View task details (you can select by number or by name, use arrows, tab, Ctrl+r, etc.):
 >
 ```
 
-and you can input the number of a task to see more details about it.
+and you can input the number or the name of a task to see more details
+about it.
 
 
 ## Configuration file
@@ -114,7 +117,7 @@ in your browser bar when you are logged in.
 
 ### Finding your user id
 
-One possible way is to find it in the output of:
+One possible way to find it is with the output of:
 
 ```sh
 http https://api.clickup.com/api/v2/team/YOUR_TEAM_ID 'Authorization: YOUR_TOKEN' \
