@@ -30,31 +30,11 @@ def main():
 
         colors = get_colors(cfg.get('theme', 'dark'))
 
-        for i, task in enumerate(tasks):
+        for i, task in enumerate(tasks):  # print summaries of tasks
             print(f'\n# {i+1} ' + info(task, colors))
 
-        if not sys.stdout.isatty():
-            sys.exit()  # skip interactive mode if redirecting the output
-
-        task_names = [task['name'] for task in tasks]
-        readline_init(task_names)
-
-        print('\nView task details (you can select by number or by name, '
-              'use arrows, tab, Ctrl+r, etc.):', end='')
-        while True:
-            choice = input('\n> ')
-
-            if not choice:
-                break
-            elif choice.isdecimal():
-                i = int(choice) - 1
-                assert 0 <= i < len(tasks), f'Unknown task number: {i+1}'
-            else:
-                i = task_names.index(choice)
-
-            task = tasks[i]
-            print(f'\n# {i+1} ' + info(task, colors) + '\n')
-            print(colors.text(task['text_content'] or '<no content>'))
+        if sys.stdout.isatty():  # skip interactive mode if redirecting output
+            interactive_view(tasks, colors)
 
     except HTTPError as e:
         print(e)
@@ -75,23 +55,6 @@ def read_config():
     return cp['top']
 
 
-def readline_init(names):
-    "Initialize readline using the given names to complete"
-    readline.parse_and_bind('tab: complete')
-    readline.parse_and_bind('set show-all-if-ambiguous on')
-
-    readline.set_completer_delims('')  # use full sentence, not just words
-
-    for name in names:
-        readline.add_history(name)  # so one can scroll and search them
-
-    def completer(text, state):
-        matches = [name for name in names if text.lower() in name.lower()]
-        return matches[state] if state < len(matches) else None
-
-    readline.set_completer(completer)
-
-
 def info(task, colors):
     "Return a string with information about the task"
     status = colors.status(task['status']['status'])
@@ -108,9 +71,50 @@ def info(task, colors):
             f'{lname} - {status} - {priority}{due_date}{url}')
 
 
-
 def to_date(str_ms):
     return datetime.fromtimestamp(int(str_ms) // 1000).strftime('%a %d %b')
+
+
+def interactive_view(tasks, colors):
+    "Ask for a task and show its details"
+    task_names = [task['name'] for task in tasks]
+
+    readline_init(task_names)
+
+    print('\nView task details (you can select by number or by name, '
+          'use arrows, tab, Ctrl+r, etc.):', end='')
+
+    while True:
+        choice = input('\n> ')
+
+        if not choice:
+            break
+        elif choice.isdecimal():
+            i = int(choice) - 1
+            assert 0 <= i < len(tasks), f'Unknown task number: {i+1}'
+        else:
+            i = task_names.index(choice)
+
+        task = tasks[i]
+        print(f'\n# {i+1} ' + info(task, colors) + '\n')
+        print(colors.text(task['text_content'] or '<no content>'))
+
+
+def readline_init(names):
+    "Initialize readline using the given names to complete"
+    readline.parse_and_bind('tab: complete')
+    readline.parse_and_bind('set show-all-if-ambiguous on')
+
+    readline.set_completer_delims('')  # use full sentence, not just words
+
+    for name in names:
+        readline.add_history(name)  # so one can scroll and search them
+
+    def completer(text, state):
+        matches = [name for name in names if text.lower() in name.lower()]
+        return matches[state] if state < len(matches) else None
+
+    readline.set_completer(completer)
 
 
 
