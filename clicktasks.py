@@ -8,6 +8,7 @@ import sys
 from datetime import datetime
 from configparser import ConfigParser, ParsingError
 from urllib.error import HTTPError
+import readline
 
 import cache
 from colors import get_colors
@@ -35,12 +36,20 @@ def main():
         if not sys.stdout.isatty():
             sys.exit()  # skip interactive mode if redirecting the output
 
+        task_names = [task['name'] for task in tasks]
+        readline_init(task_names)
+
         while True:
             choice = input('\n> ')
-            if not choice.isdecimal() or not 0 < int(choice) <= len(tasks):
-                break
 
-            i = int(choice) - 1
+            if not choice:
+                break
+            elif choice.isdecimal():
+                i = int(choice) - 1
+                assert 0 <= i < len(tasks), f'Unknown task number: {i+1}'
+            else:
+                i = task_names.index(choice)
+
             task = tasks[i]
             print(f'\n# {i+1} ' + info(task, colors) + '\n')
             print(colors.text(task['text_content'] or '<no content>'))
@@ -62,6 +71,20 @@ def read_config():
     with open('clickdown.cfg') as fp:
         cp.read_string('[top]\n' + fp.read())
     return cp['top']
+
+
+def readline_init(names):
+    "Initialize readline using the given names to complete"
+    readline.parse_and_bind('tab: complete')
+    readline.parse_and_bind('set show-all-if-ambiguous on')
+
+    readline.set_completer_delims('')  # use full sentence, not just words
+
+    def completer(text, state):
+        matches = [name for name in names if text.lower() in name.lower()]
+        return matches[state] if state < len(matches) else None
+
+    readline.set_completer(completer)
 
 
 def info(task, colors):
