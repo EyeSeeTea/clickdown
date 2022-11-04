@@ -62,10 +62,10 @@ def info(task, colors):
     name = colors.title(task['name'])
     url = colors.url(task['url'])
 
-    priority = colors.priority((('priority %s ' % task['priority']['priority'])
-                                if task['priority'] else ''))
-    due_date = colors.due(('due %s ' % to_date(task['due_date'])
-                           if task['due_date'] else ''))
+    priority = colors.priority(('priority %s ' % task['priority']['priority'])
+                               if task['priority'] else '')
+    due_date = colors.due('due %s ' % to_date(task['due_date'])
+                          if task['due_date'] else '')
 
     return (f'{name}\n'
             f'{lname} - {status} - {priority}{due_date}{url}')
