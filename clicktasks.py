@@ -39,6 +39,8 @@ def main():
         task_names = [task['name'] for task in tasks]
         readline_init(task_names)
 
+        print('\nView task details (you can select by number or by name, '
+              'use arrows, tab, Ctrl+r, etc.):', end='')
         while True:
             choice = input('\n> ')
 
@@ -79,6 +81,9 @@ def readline_init(names):
     readline.parse_and_bind('set show-all-if-ambiguous on')
 
     readline.set_completer_delims('')  # use full sentence, not just words
+
+    for name in names:
+        readline.add_history(name)  # so one can scroll and search them
 
     def completer(text, state):
         matches = [name for name in names if text.lower() in name.lower()]
