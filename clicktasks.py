@@ -106,6 +106,7 @@ def readline_init(names):
     readline.parse_and_bind('set show-all-if-ambiguous on')
 
     readline.set_completer_delims('')  # use full sentence, not just words
+    readline.set_auto_history(False)  # do not add new lines to history
 
     for name in names:
         readline.add_history(name)  # so one can scroll and search them
