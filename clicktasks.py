@@ -19,7 +19,7 @@ def main():
         cfg = read_config()
 
         refresh_url = ('https://api.clickup.com/api/v2'
-                       '/team/{team}/task?assignees[]={user}')
+                       '/team/{team}/task?assignees[]={user}&subtasks=true')
 
         tasks_all = cache.get_data('tasks.json', refresh_url, cfg)['tasks']
 
