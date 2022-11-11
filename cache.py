@@ -49,5 +49,5 @@ def write_cache(fname, data):
     if not os.path.exists(cachedir):
         os.mkdir(cachedir)
 
-    cache = f'{cachedir}/{fname}'
-    open(cache, 'wb').write(data)
+    with open(f'{cachedir}/{fname}', 'wb') as fp:
+        fp.write(data)
