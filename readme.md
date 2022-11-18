@@ -117,15 +117,12 @@ in your browser bar when you are logged in.
 
 ### Finding your user id
 
-One possible way to find it is with the output of:
+If you have your `team` id and `token` already in `clickdown.cfg`, you
+can find your user id by looking at the output of:
 
 ```sh
-http https://api.clickup.com/api/v2/team/YOUR_TEAM_ID 'Authorization: YOUR_TOKEN' \
-    | jq -c '.team.members[].user | {id, username}'
+./show_members.py
 ```
-
-(This example uses [httpie](https://httpie.io/) and
-[jq](https://stedolan.github.io/jq/).)
 
 
 ## Clickup api
