@@ -10,7 +10,7 @@ from itertools import groupby
 from configparser import ParsingError
 from urllib.error import HTTPError
 
-import common
+import config
 import cache
 from colors import get_colors
 
@@ -20,7 +20,7 @@ def main():
         url = ('https://api.clickup.com/api/v2'
                '/team/{team}/time_entries')
 
-        cfg = common.init(__doc__)
+        cfg = config.init(__doc__)
 
         entries_all = cache.retrieve('time.json', url, cfg)['data']
 

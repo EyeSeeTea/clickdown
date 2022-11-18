@@ -10,7 +10,7 @@ from configparser import ParsingError
 from urllib.error import HTTPError
 import readline
 
-import common
+import config
 import cache
 from colors import get_colors
 
@@ -20,7 +20,7 @@ def main():
         url = ('https://api.clickup.com/api/v2'
                '/team/{team}/task?assignees[]={user}&subtasks=true')
 
-        cfg = common.init(__doc__)
+        cfg = config.init(__doc__)
 
         tasks_all = cache.retrieve('tasks.json', url, cfg)['tasks']
 
