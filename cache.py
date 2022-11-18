@@ -11,11 +11,11 @@ cachedir = os.environ.get('XDG_CACHE_HOME',
                           f'{os.environ["HOME"]}/.cache') + '/clickdown'
 
 
-def get_data(fname, refresh_url, cfg):
-    "Return data as they come from an api request"
+def retrieve(fname, url, cfg):
+    "Read data from cache or url, return it and cache it"
     fp, age = read_cache(fname)
 
-    if fp:
+    if not cfg['refresh'] and fp is not None:
         if age < int(cfg.get('cache_age_max', 3600)):  # in seconds
             print(f'Reading from {cachedir}/{fname} ...')
             return json.loads(fp.read())
@@ -23,8 +23,8 @@ def get_data(fname, refresh_url, cfg):
             print('Cache file is too old and will update.')
             fp.close()
 
-    url = refresh_url.format(team=cfg['team'], user=cfg.get('user', '0000'))
-    req = Request(url, headers={'Authorization': cfg['token']})
+    url_full = url.format(team=cfg['team'], user=cfg.get('user', '0000'))
+    req = Request(url_full, headers={'Authorization': cfg['token']})
 
     print(f'Connecting to {url} ...')
     data = urlopen(req).read()

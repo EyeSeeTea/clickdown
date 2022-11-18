@@ -10,18 +10,19 @@ from itertools import groupby
 from configparser import ConfigParser, ParsingError
 from urllib.error import HTTPError
 
+import common
 import cache
 from colors import get_colors
 
 
 def main():
     try:
-        cfg = read_config()
+        url = ('https://api.clickup.com/api/v2'
+               '/team/{team}/time_entries')
 
-        refresh_url = ('https://api.clickup.com/api/v2'
-                       '/team/{team}/time_entries')
+        cfg = common.init(__doc__)
 
-        entries_all = cache.get_data('time.json', refresh_url, cfg)['data']
+        entries_all = cache.retrieve('time.json', url, cfg)['data']
 
         entries_all.sort(key=lambda x: x['start'])  # sort by starting date
 
@@ -45,18 +46,12 @@ def main():
         print(e)
         sys.exit('Maybe there is a problem with your token?')
     except KeyError as e:
-        sys.exit('Missing key in clickdown.cfg:', e)
+        sys.exit('Missing key in %s: %s' % (cfg['config'], e))
     except (FileNotFoundError, ParsingError, ValueError, AssertionError) as e:
         sys.exit(e)
     except (KeyboardInterrupt, EOFError) as e:
+        print()
         sys.exit()
-
-
-def read_config():
-    cp = ConfigParser()
-    with open('clickdown.cfg') as fp:
-        cp.read_string('[top]\n' + fp.read())
-    return cp['top']
 
 
 def get_week(entry):

@@ -6,22 +6,23 @@ Show pending tasks.
 
 import sys
 from datetime import datetime
-from configparser import ConfigParser, ParsingError
+from configparser import ParsingError
 from urllib.error import HTTPError
 import readline
 
+import common
 import cache
 from colors import get_colors
 
 
 def main():
     try:
-        cfg = read_config()
+        url = ('https://api.clickup.com/api/v2'
+               '/team/{team}/task?assignees[]={user}&subtasks=true')
 
-        refresh_url = ('https://api.clickup.com/api/v2'
-                       '/team/{team}/task?assignees[]={user}&subtasks=true')
+        cfg = common.init(__doc__)
 
-        tasks_all = cache.get_data('tasks.json', refresh_url, cfg)['tasks']
+        tasks_all = cache.retrieve('tasks.json', url, cfg)['tasks']
 
         ignored = cfg.get('ignored', '').split(',')
         tasks = [task for task in tasks_all
@@ -40,19 +41,12 @@ def main():
         print(e)
         sys.exit('Maybe there is a problem with your token?')
     except KeyError as e:
-        sys.exit('Missing key in clickdown.cfg:', e)
+        sys.exit('Missing key in %s: %s' % (cfg['config'], e))
     except (FileNotFoundError, ParsingError, ValueError, AssertionError) as e:
         sys.exit(e)
     except (KeyboardInterrupt, EOFError) as e:
         print()
         sys.exit()
-
-
-def read_config():
-    cp = ConfigParser()
-    with open('clickdown.cfg') as fp:
-        cp.read_string('[top]\n' + fp.read())
-    return cp['top']
 
 
 def info(task, colors):
