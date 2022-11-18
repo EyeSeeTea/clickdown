@@ -80,10 +80,10 @@ about it.
 The configuration file is named `clickdown.cfg` and looks like this:
 
 ```conf
-# Your clickup token (necessary).
+# Your clickup token (necessary). In: clickup -> user (bottom left) -> Apps.
 token = YOUR_TOKEN
 
-# The id of your team (necessary).
+# The id of your team (necessary). In: https://app.clickup.com/{team}
 team = 1234567
 
 # The id of your user (optional, only if you use clicktasks).

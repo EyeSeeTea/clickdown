@@ -10,9 +10,9 @@ from configparser import ParsingError
 from urllib.error import HTTPError
 import readline
 
-import config
-import cache
-from colors import get_colors
+from clickdown import config
+from clickdown import cache
+from clickdown.colors import get_colors
 
 
 def main():
