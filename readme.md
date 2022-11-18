@@ -11,14 +11,14 @@ contains at least your clickup token and the id of your team (see
 section `Configuration file` below).
 
 
-## Clicktime
+## time
 
 Shows information for the time tracked in tasks during the last month.
 
 Run it with:
 
 ```sh
-./clicktime.py
+./time.py
 ```
 
 It prints in the console something like:
@@ -43,14 +43,14 @@ Watched paint dry
 ```
 
 
-## Clicktasks
+## tasks
 
 Shows the tasks assigned to you.
 
 Run it with:
 
 ```sh
-./clicktasks.py
+./tasks.py
 ```
 
 It prints in the console something like:
@@ -86,10 +86,10 @@ token = YOUR_TOKEN
 # The id of your team (necessary). In: https://app.clickup.com/{team}
 team = 1234567
 
-# The id of your user (optional, only if you use clicktasks).
+# The id of your user (optional, only if you use tasks).
 user = 12345678
 
-# Comma-separated list of status of tasks to ignore (in clicktasks, optional).
+# Comma-separated list of status of tasks to ignore (in tasks, optional).
 ignored = to test,blocked,done (to be reviewed)
 
 # Maximum number of seconds to keep the cached files (optional, 1h by default).
@@ -134,5 +134,5 @@ Reference about the clickup api: https://clickup.com/api
 
 In particular, these are the endpoints for each program:
 
-* clicktime - https://clickup.com/api/clickupreference/operation/Gettimeentrieswithinadaterange/
-* clicktasks - https://clickup.com/api/clickupreference/operation/GetFilteredTeamTasks/
+* time - https://clickup.com/api/clickupreference/operation/Gettimeentrieswithinadaterange/
+* tasks - https://clickup.com/api/clickupreference/operation/GetFilteredTeamTasks/
