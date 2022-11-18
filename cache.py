@@ -26,7 +26,7 @@ def retrieve(fname, url, cfg):
     url_full = url.format(team=cfg['team'], user=cfg.get('user', '0000'))
     req = Request(url_full, headers={'Authorization': cfg['token']})
 
-    print(f'Connecting to {url} ...')
+    print(f'Connecting to {url_full} ...')
     data = urlopen(req).read()
 
     print(f'Caching result in {cachedir}/{fname} ...')

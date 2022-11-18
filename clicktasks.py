@@ -27,6 +27,7 @@ def main():
         ignored = cfg.get('ignored', '').split(',')
         tasks = [task for task in tasks_all
                  if task['status']['status'] not in ignored]
+
         tasks.sort(key=lambda x: x['date_created'])  # sort by created date
 
         colors = get_colors(cfg.get('theme', 'dark'))

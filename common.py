@@ -1,5 +1,5 @@
 from argparse import ArgumentParser, ArgumentDefaultsHelpFormatter as fmt
-from configparser import ConfigParser, ParsingError
+from configparser import ConfigParser
 
 
 def init(doc=None):
@@ -14,7 +14,7 @@ def get_args(doc):
 
     add = parser.add_argument  # shortcut
     add('-c', '--config', default='clickdown.cfg', help='configuration file')
-    add('-r', '--refresh', action='store_true', help='force refresh (skip cache)')
+    add('-r', '--refresh', action='store_true', help='force refresh from url')
 
     return parser.parse_args()
 

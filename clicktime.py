@@ -7,7 +7,7 @@ Show the tracked time in clickup.
 import sys
 from datetime import datetime
 from itertools import groupby
-from configparser import ConfigParser, ParsingError
+from configparser import ParsingError
 from urllib.error import HTTPError
 
 import common
