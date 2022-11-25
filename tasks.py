@@ -67,7 +67,7 @@ def info(task, colors):
 
 
 def to_date(str_ms):
-    "Return a readable recent date from a str with milliseconds after 1970"
+    "Return a readable recent date from a str with milliseconds since 1970"
     # E.g. 1656558000000 -> 'Thu 30 Jun'
     return datetime.fromtimestamp(int(str_ms) // 1000).strftime('%a %d %b')
 

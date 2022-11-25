@@ -14,7 +14,7 @@ from clickdown import config
 from clickdown import cache
 from clickdown.colors import get_colors
 
-now = datetime.timestamp(datetime.now())
+now = datetime.timestamp(datetime.now())  # seconds since 1970-01-01
 
 
 def main():
