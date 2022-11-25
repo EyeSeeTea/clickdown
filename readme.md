@@ -88,7 +88,7 @@ token = YOUR_TOKEN
 # The id of your team (necessary). In: https://app.clickup.com/{team}
 team = 1234567
 
-# The id of your user (optional, necessary only if you use tasks).
+# The id of your user (necessary only if you use tasks).
 user = 12345678
 
 # Comma-separated list of status of tasks to ignore (in tasks, optional).
