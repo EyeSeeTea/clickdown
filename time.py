@@ -30,7 +30,7 @@ def main():
         print('\nShowing entries for the last %g days:' % days_max)
 
         entries_recent = [entry for entry in entries_all
-                          if (now - get_span(entry)[0]) < days_max * 24 * 3600]
+                          if (now - get_span(entry)[1]) < days_max * 24 * 3600]
 
         entries_recent.sort(key=lambda x: x['start'])  # sort by starting date
 
