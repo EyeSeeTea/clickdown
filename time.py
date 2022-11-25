@@ -35,12 +35,12 @@ def main():
                 entries_day = list(group_day)  # don't exhaust the iterator
                 total_day_s = sum(get_duration(entry) for entry in entries_day)
 
-                print('\n== %s (total: %.2f h) ==' % (day, total_day_s / 3600))
+                print('\n== %s (total: %.1f h) ==' % (day, total_day_s / 3600))
                 for entry in entries_day:
                     print('\n' + info(entry, colors))
 
             total_week_s = sum(get_duration(entry) for entry in entries_week)
-            print('\n-- (week total: %.2f h) --\n' % (total_week_s / 3600))
+            print('\n-- (week total: %.1f h) --\n' % (total_week_s / 3600))
 
     except HTTPError as e:
         print(e)
