@@ -14,6 +14,8 @@ from clickdown import config
 from clickdown import cache
 from clickdown.colors import get_colors
 
+now = datetime.timestamp(datetime.now())
+
 
 def main():
     try:
@@ -24,11 +26,17 @@ def main():
 
         entries_all = cache.retrieve('time.json', url, cfg)['data']
 
-        entries_all.sort(key=lambda x: x['start'])  # sort by starting date
+        days_max = min(float(cfg.get('days_max', 14)), 30)  # the api gives 30
+        print('\nShowing entries for the last %g days:' % days_max)
+
+        entries_recent = [entry for entry in entries_all
+                          if (now - get_span(entry)[0]) < days_max * 24 * 3600]
+
+        entries_recent.sort(key=lambda x: x['start'])  # sort by starting date
 
         colors = get_colors(cfg.get('theme', 'dark'))
 
-        for week, group_week in groupby(entries_all, get_week):
+        for week, group_week in groupby(entries_recent, get_week):
             entries_week = list(group_week)  # don't exhaust the iterator
 
             for day, group_day in groupby(entries_week, get_day):

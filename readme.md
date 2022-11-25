@@ -27,7 +27,9 @@ It prints in the console something like:
 Connecting to https://api.clickup.com/api/v2/team/1234567/time_entries ...
 Caching result in /home/you/.cache/clickdown/time.json ...
 
-== Mon 19 Sep (total: 4.00 h) ==
+Showing entries for the last 14 days:
+
+== Mon 19 Sep (total: 4.0 h) ==
 
 09:00 - 11:00 (2.00 h)
 Server optimization https://app.clickup.com/t/253hjxz
@@ -37,7 +39,7 @@ Rewired the servers for max fun
 Boring task #666 https://app.clickup.com/t/133hgxs
 Watched paint dry
 
-== Tue 20 Sep (total: 6.25 h) ==
+== Tue 20 Sep (total: 6.2 h) ==
 
 [...]
 ```
@@ -94,6 +96,9 @@ ignored = to test,blocked,done (to be reviewed)
 
 # Maximum number of seconds to keep the cached files (optional, 1h by default).
 cache_age_max = 3600
+
+# Maximum number of days to show (optional, 14 by default, 30 maximum)
+days_max = 14
 
 # Color theme (optional, can be "light", "dark" (default), or "none").
 theme = dark
