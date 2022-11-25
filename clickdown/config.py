@@ -3,9 +3,10 @@ from configparser import ConfigParser
 
 
 def init(doc=None):
+    "Return dict with config file properties and command-line arguments"
     args = get_args(doc)
     cfg = read_config(args.config)
-    return dict(cfg, config=args.config, refresh=args.refresh)
+    return dict(cfg, config=args.config, refresh=args.refresh)  # cfg + args
 
 
 def get_args(doc):
@@ -20,7 +21,14 @@ def get_args(doc):
 
 
 def read_config(fname):
+    valid_keys = ['token', 'team', 'user', 'ignored', 'cache_age_max',
+                  'days_max', 'theme']
+
     cp = ConfigParser()
-    with open(fname) as fp:
-        cp.read_string('[top]\n' + fp.read())
-    return cp['top']
+    cp.read_string('[top]\n' + open(fname).read())
+    cfg = cp['top']
+
+    for k in cfg.keys():
+        assert k in valid_keys, f'Unknown property in config file {fname}: {k}'
+
+    return cfg
