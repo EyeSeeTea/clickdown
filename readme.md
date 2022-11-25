@@ -88,7 +88,7 @@ token = YOUR_TOKEN
 # The id of your team (necessary). In: https://app.clickup.com/{team}
 team = 1234567
 
-# The id of your user (optional, only if you use tasks).
+# The id of your user (optional, necessary only if you use tasks).
 user = 12345678
 
 # Comma-separated list of status of tasks to ignore (in tasks, optional).
@@ -97,7 +97,7 @@ ignored = to test,blocked,done (to be reviewed)
 # Maximum number of seconds to keep the cached files (optional, 1h by default).
 cache_age_max = 3600
 
-# Maximum number of days to show (optional, 14 by default, 30 maximum)
+# Maximum number of days to show (in time, optional, 14 by default, 30 maximum).
 days_max = 14
 
 # Color theme (optional, can be "light", "dark" (default), or "none").
