@@ -24,9 +24,7 @@ def main():
 
         tasks_all = cache.retrieve('tasks.json', url, cfg)['tasks']
 
-        ignored = cfg.get('ignored', '').split(',')
-        tasks = [task for task in tasks_all
-                 if task['status']['status'] not in ignored]
+        tasks = filter_status(tasks_all, cfg.get('ignored'), cfg.get('status'))
 
         tasks.sort(key=lambda x: x['date_created'])  # sort by created date
 
@@ -48,6 +46,19 @@ def main():
     except (KeyboardInterrupt, EOFError) as e:
         print()
         sys.exit()
+
+
+def filter_status(tasks, ignored, status):
+    if status:
+        print(f'Selecting only tasks with status: {status}')
+        return [task for task in tasks
+                if task['status']['status'] in status.split(',')]
+    elif ignored:
+        print(f'Selecting tasks except for status: {ignored}')
+        return [task for task in tasks
+                if task['status']['status'] not in ignored.split(',')]
+    else:
+        return tasks
 
 
 def info(task, colors):
