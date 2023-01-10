@@ -46,6 +46,7 @@ def read_cache(fname):
 
 
 def write_cache(fname, data):
+    "Write in file fname (inside the cache dir) the given data"
     if not os.path.exists(cachedir):
         os.mkdir(cachedir)
 

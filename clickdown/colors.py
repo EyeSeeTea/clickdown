@@ -8,10 +8,11 @@ def ansi(n, bold=False):
     "Return function that escapes text with ANSI color n"
     return lambda txt: f'\x1b[{n}{";1" if bold else ""}m{txt}\x1b[0m'
 
-none = lambda txt: txt
-black, red, green, yellow, blue, magenta, cyan, white = map(ansi, range(30, 38))
+none = lambda txt: txt  # function that doesn't colorize its input text
+black, red, green, yellow, blue, magenta, cyan, white = [
+    ansi(i) for i in range(30, 38)]  # some colors (non-bold version)
 blackB, redB, greenB, yellowB, blueB, magentaB, cyanB, whiteB = [
-    ansi(i, bold=True) for i in range(30, 38)]
+    ansi(i, bold=True) for i in range(30, 38)]  # bold version of the colors
 
 
 def get_colors(theme):

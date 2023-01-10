@@ -49,6 +49,8 @@ def main():
 
 
 def filter_status(tasks, ignored, status):
+    "Return the given list of tasks without the ignored, or only the given"
+    # "ignored" and "status" look like 'blocked,done,to test'
     if status:
         print(f'Selecting only tasks with status: {status}')
         return [task for task in tasks
