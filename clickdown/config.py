@@ -6,8 +6,11 @@ def init(doc=None):
     "Return dict with config file properties and command-line arguments"
     args = get_args(doc)
     cfg = read_config(args.config)
-    return dict(cfg,  # cfg + args
-                config=args.config, refresh=args.refresh, status=args.status)
+    return dict(cfg,                  # cfg + args
+                config=args.config,
+                refresh=args.refresh,
+                cached=args.cached,
+                status=args.status)
 
 
 def get_args(doc):
@@ -17,7 +20,8 @@ def get_args(doc):
     add = parser.add_argument  # shortcut
     add('-c', '--config', default='clickdown.cfg', help='configuration file')
     add('-r', '--refresh', action='store_true', help='force refresh from url')
-    add('-s', '--status',  help='show only tasks with the given status(es)')
+    add('-d', '--cached', action='store_true', help='force use cached data')
+    add('-s', '--status', help='show only tasks with the given status(es)')
 
     return parser.parse_args()
 

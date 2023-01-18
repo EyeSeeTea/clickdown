@@ -16,7 +16,7 @@ def retrieve(fname, url, cfg):
     fp, age = read_cache(fname)
 
     if not cfg['refresh'] and fp is not None:
-        if age < int(cfg.get('cache_age_max', 3600)):  # in seconds
+        if cfg['cached'] or age < int(cfg.get('cache_age_max', 3600)):  # in sec
             print(f'Reading from {cachedir}/{fname} ...')
             return json.loads(fp.read())
         else:
