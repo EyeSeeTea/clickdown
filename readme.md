@@ -2,18 +2,21 @@
 
 Utilities to work with [clickup](https://clickup.com/).
 
-They work by making queries to the clickup api. The requests are
-cached for some time (an hour by default), but you can delete the
-cache files at any point.
+* `time.py` shows your tracked time
+* `tasks.py` shows your tasks
 
-To run them, you need a configuration file named `clickdown.cfg` that
+They work by making queries to the clickup api. The responses are
+cached for some time (an hour by default), but you can force a reload
+or delete the cache files at any point.
+
+To run you need a configuration file named `clickdown.cfg` that
 contains at least your clickup token and the id of your team (see
 section `Configuration file` below).
 
 
 ## time
 
-Shows information for the time tracked in tasks during the last month.
+Shows information for your time tracked in tasks during the last month.
 
 Run it with:
 
